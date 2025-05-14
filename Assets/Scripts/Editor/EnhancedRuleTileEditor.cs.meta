@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 59e09b978147dca4ca3c09da15770219
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_PreviewGrid: {instanceID: 0}
+  - solidTexture: {fileID: 2800000, guid: eca6080e808c27d46876bcd19d2af950, type: 3}
+  - hollowTexture: {fileID: 2800000, guid: f299ada04ad43554db0b5ae31bd0efe9, type: 3}
+  - emptyTexture: {fileID: 2800000, guid: f299ada04ad43554db0b5ae31bd0efe9, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

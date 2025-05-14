@@ -1,0 +1,23 @@
+Dungeon Generator Project 2025
+
+DEVLOG FOR Dungeon Generator Project
+May 2025
+
+* IDEAS
+- Make an updated version of the last years entry. With some new fetures.
+
+13/5	* Project started
+		* Added Rule Tiles
+		* Added Rule Tile 3D creator that takes tilesprites generating 3D objects
+14/5	* Added levels for the generator
+		* Added custom window for enabling tilemaps and levels
+		* Combined doors with walls by enhanced tilerules
+
+
+
+		// WANTS
+		// Make the new tilemap autoselect in hierachy so painting can be done on it directly
+
+
+
+		
