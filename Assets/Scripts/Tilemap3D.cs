@@ -1,7 +1,12 @@
 using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
+using UnityEngine.WSA;
 using Utilities;
+using static UnityEditor.Progress;
+
+public enum Tilemap3DModes{OFF,TileMap,Objects}
 
 public class Tilemap3D : MonoBehaviour
 {
@@ -13,9 +18,36 @@ public class Tilemap3D : MonoBehaviour
     [SerializeField] private Sprite[] DoorSprites;
 
     [SerializeField] private GameObject objectHolder;
+    [SerializeField] private GameObject transparentBackground;
+    [SerializeField] private Renderer renderer;
     //[SerializeField] private bool autoUpdate = false;
 
     public GameObject GetHolder => objectHolder;
+    public GameObject GetTransBackground => transparentBackground;
+
+    public Tilemap3DModes Mode { get; set; }
+
+    public void TileMapView() 
+    {
+        Mode = Tilemap3DModes.TileMap;
+        // Show TileMap
+        objectHolder.SetActive(false);
+        renderer.enabled = true;
+        transparentBackground.SetActive(true);
+    }
+    
+    public void ObjectView(bool autoUpdate) 
+    {
+        if (autoUpdate)
+            Generate3DTilesForced();
+
+        Mode = Tilemap3DModes.Objects;
+        // Show Tile Objects
+        renderer.enabled = false;
+        transparentBackground.SetActive(false);
+        objectHolder.SetActive(true);
+    }
+        
 
     private Vector3 offset = new Vector3(0.5f,0f,0.5f);
     Tilemap tilemap;
@@ -109,4 +141,17 @@ public class Tilemap3D : MonoBehaviour
         }
     }
 
+    private void OnGUI()
+    {
+        Renderer renderer = this.GetComponent<Renderer>();
+        // Make sure the level is set to the Z value
+        if(renderer != null && renderer.sortingOrder != (int)transform.position.y)
+            renderer.sortingOrder = (int)transform.position.y;
+    }
+
+    public void TurnOff()
+    {
+        Mode = Tilemap3DModes.OFF;
+        gameObject.SetActive(false);
+    }
 }

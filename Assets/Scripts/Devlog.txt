@@ -12,8 +12,9 @@ May 2025
 14/5	* Added levels for the generator
 		* Added custom window for enabling tilemaps and levels
 		* Combined doors with walls by enhanced tilerules
-
-
+		* Doors and walls are now on same layer
+		* Recreated Git file cause of failed first time
+16/5	* Made 3D tilemap class ahndle all transitions between states
 
 		// WANTS
 		// Make the new tilemap autoselect in hierachy so painting can be done on it directly
