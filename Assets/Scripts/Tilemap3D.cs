@@ -1,12 +1,11 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
-using UnityEngine.WSA;
 using Utilities;
-using static UnityEditor.Progress;
 
-public enum Tilemap3DModes{OFF,TileMap,Objects}
+public enum Tilemap3DModes{OFF,TileMap,Objects }
+public enum AutoUpdateMode { OFF, ON, INSTANT }
 
 public class Tilemap3D : MonoBehaviour
 {
@@ -25,7 +24,8 @@ public class Tilemap3D : MonoBehaviour
     public GameObject GetHolder => objectHolder;
     public GameObject GetTransBackground => transparentBackground;
 
-    public Tilemap3DModes Mode { get; set; }
+    public Tilemap3DModes Mode { get; set; } = Tilemap3DModes.OFF;
+    public AutoUpdateMode UpdateMode { get; set; } = AutoUpdateMode.OFF;
 
     public void TileMapView() 
     {
@@ -147,6 +147,27 @@ public class Tilemap3D : MonoBehaviour
         // Make sure the level is set to the Z value
         if(renderer != null && renderer.sortingOrder != (int)transform.position.y)
             renderer.sortingOrder = (int)transform.position.y;
+
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("Onenable");
+        //SetCurrentMode();        
+    }
+
+    public void SetCurrentMode()
+    {
+        Debug.Log("SetCurrent mode set for "+gameObject.name);
+        // Only runs when object is enabled
+        if(!this.gameObject.activeSelf)
+            Mode = Tilemap3DModes.OFF;
+        else if (this.GetComponent<Renderer>().enabled)
+            Mode = Tilemap3DModes.TileMap;
+        else
+            Mode = Tilemap3DModes.Objects;
+
+        Debug.Log("Mode: "+Mode); 
     }
 
     public void TurnOff()
