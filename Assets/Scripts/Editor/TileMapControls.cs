@@ -2,6 +2,7 @@
 using UnityEditor;
 using System.Linq;
 using UnityEditor.Tilemaps;
+using System;
 
 
 public class TileMapControls : EditorWindow
@@ -21,6 +22,8 @@ public class TileMapControls : EditorWindow
     private void OnGUI()
     {
         Tilemap3DModes[] modes = GetMapModes();
+        int[] objectsAmount = GetTotalObjects();
+
         int activeLayer = GetActiveLayer();
 
         GUILayout.BeginHorizontal();
@@ -38,56 +41,56 @@ public class TileMapControls : EditorWindow
 
         GUILayout.Space(10);
 
+        // Header Row
         GUILayout.BeginHorizontal();
-        GUILayout.FlexibleSpace();
-        GUILayout.Label("Levels",EditorStyles.boldLabel);   
-        GUILayout.FlexibleSpace();
+        GUILayout.Label("Level", CenterLabelStyle(), GUILayout.Width(150));
+        GUILayout.Label("Active Mode", CenterLabelStyle(), GUILayout.Width(100));
+        GUILayout.Label("Objects", CenterLabelStyle(), GUILayout.Width(100));
+        GUILayout.Label("Active", CenterLabelStyle(), GUILayout.Width(70));
         GUILayout.EndHorizontal();
 
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Toggle Level 0",GUILayout.Width(150))) {
-            ToggleVisability(0);
-        }
-        if (modes.Length >= 1) GUILayout.Label(" " + modes[0]);
-        if (GUILayout.Button(activeLayer == 0 ? "ACTIVE":"---",GUILayout.Width(70))) {
-            // Request this layer to become active
-            ToggleActive(0);
-        }
-        GUILayout.EndHorizontal();
+        // Data Rows
+        for (int i = 0; i < objectsAmount.Length; i++) {
+            GUILayout.BeginHorizontal();
 
+            // Button Part
+            if (GUILayout.Button("Toggle Level "+(-i), GUILayout.Width(150))) {
+                ToggleVisability(0);
+            }
 
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button("Toggle Level -1",GUILayout.Width(150))) {
-            ToggleVisability(-1);
-        }
-        if (modes.Length >= 2) GUILayout.Label(" " + modes[1]);
-        if (GUILayout.Button(activeLayer == 1 ? "ACTIVE" : "---", GUILayout.Width(70))) {
-            // Request this layer to become active
-            ToggleActive(1);
-        }
-        GUILayout.EndHorizontal();
+            // Mode Part
+            if (modes.Length >= 1) GUILayout.Label("" + modes[i], CenterLabelStyle(), GUILayout.Width(100));
 
-        GUILayout.BeginHorizontal();
-        if(GUILayout.Button("Toggle Level -2",GUILayout.Width(150))) {
-            ToggleVisability(-2);
-        }
-        if (modes.Length >= 3) GUILayout.Label(" " + modes[2]);
-        if (GUILayout.Button(activeLayer == 2 ? "ACTIVE" : "---", GUILayout.Width(70))) {
-            // Request this layer to become active
-            ToggleActive(2);
-        }
-        GUILayout.EndHorizontal();
+            // Objects Part
+            if (modes.Length >= 1) GUILayout.Label(""+ objectsAmount[i], CenterLabelStyle(), GUILayout.Width(100));
 
-        GUILayout.BeginHorizontal();
-        if(GUILayout.Button("Toggle Level -3",GUILayout.Width(150))) {
-            ToggleVisability(-3);
+            // Active part
+            if (GUILayout.Button(activeLayer == i ? "ACTIVE":"---", GUILayout.Width(70))) {
+                // Request this layer to become active
+                ToggleActive(i);
+            }
+
+            GUILayout.EndHorizontal();
         }
-        GUILayout.Label((modes.Length >= 4)?(" " + modes[3]):"DISABLED");
-        if (GUILayout.Button(activeLayer == 3 ? "ACTIVE" : "---", GUILayout.Width(70))) {
-            // Request this layer to become active
-            ToggleActive(3);
+    }
+
+    // GUI Settings STYLE
+    private GUIStyle CenterLabelStyle()
+    {
+        var style = new GUIStyle(GUI.skin.label);
+        style.alignment = TextAnchor.MiddleCenter;
+        return style;
+    }
+
+    private int[] GetTotalObjects()
+    {
+        Tilemap3D[] tilemaps = GetAllTileMap3D();
+        int[] amt = new int[tilemaps.Length];
+        for (int i = 0; i < tilemaps.Length; i++) {
+            Tilemap3D tileMap = tilemaps[i];
+            amt[i] = tileMap.GetHolder.transform.childCount;
         }
-        GUILayout.EndHorizontal();
+        return amt;
     }
 
     private int GetActiveLayer()
@@ -109,7 +112,7 @@ public class TileMapControls : EditorWindow
 
     private void ToggleAutoUpdate()
     {
-        if(autoUpdate == AutoUpdateMode.INSTANT) {
+        if(autoUpdate == AutoUpdateMode.INSTANTFAST) {
             autoUpdate = AutoUpdateMode.OFF;         
         }else
             autoUpdate = (AutoUpdateMode)((int)autoUpdate+1);

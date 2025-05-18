@@ -14,7 +14,13 @@ May 2025
 		* Combined doors with walls by enhanced tilerules
 		* Doors and walls are now on same layer
 		* Recreated Git file cause of failed first time
-16/5	* Made 3D tilemap class ahndle all transitions between states
+16/5	* Made 3D tilemap class handle all transitions between states
+18/5	* Added fast update for changes in tilemap
+		* Made buttons and text align in the Controls
+
+		* Make the changes for tilemaps code better
+		* Make changing rotation of stairs update the map correctly
+
 
 		// WANTS
 		// Make the new tilemap autoselect in hierachy so painting can be done on it directly

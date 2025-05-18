@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Utilities;
 
 public enum Tilemap3DModes{OFF,TileMap,Objects }
-public enum AutoUpdateMode { OFF, ON, INSTANT }
+public enum AutoUpdateMode { OFF, ON, INSTANT,
+    INSTANTFAST
+}
 
 public class Tilemap3D : MonoBehaviour
 {
@@ -75,6 +79,57 @@ public class Tilemap3D : MonoBehaviour
         RemoveAllTiles();
 
         CreateAllObjectsFromSprites();        
+    }
+
+    internal void Generate3DTilesForcedSpecific(List<Vector2Int> changedPositions)
+    {
+        if (tilemap == null)
+            tilemap = GetComponent<Tilemap>();
+
+        Transform[] objects = GetObjectsAt(changedPositions);
+
+        //Debug.Log("Generate Only affected tiles");
+        for (int i = 0; i < changedPositions.Count; i++) {
+            
+            Vector2Int pos = changedPositions[i];
+
+            //Debug.Log("Change at: "+pos);
+            Sprite sprite = tilemap.GetSprite(new Vector3Int(pos.x,pos.y,0));
+            // Find the current object and delete it
+            if (objects[i] != null) {
+                DestroyImmediate(objects[i].gameObject);
+            }
+
+            if (sprite != null) {
+                // There is a sprite here get its index = type
+                int index = Array.IndexOf(TileSprites,sprite);
+                //Debug.Log("Update or create object ID: "+index+" at "+pos);
+
+                // Create an Object of that type
+                float rotation = -tilemap.GetTransformMatrix(new Vector3Int(pos.x,pos.y,0)).rotation.eulerAngles.z;
+
+                Vector3Int XZPosition = new Vector3Int(pos.x, 0, pos.y);
+                //Debug.Log("Changing tilePosition "+pos+" to dungeon position "+XZPosition);
+                CreateObjectFromSprite(sprite, XZPosition, rotation);
+
+            }
+        }    
+
+    }
+
+    private Transform[] GetObjectsAt(List<Vector2Int> pos)
+    {
+        Transform[] objectTransforms = new Transform[pos.Count];
+
+        foreach (Transform child in objectHolder.transform) {
+            Vector3 posAdjusted = child.position-offset;
+            Vector2Int posInt = new Vector2Int(Mathf.RoundToInt(posAdjusted.x),Mathf.RoundToInt(posAdjusted.z));
+            int index = pos.IndexOf(posInt);
+            if (index != -1) {
+                objectTransforms[index] = child;
+            }
+        }
+        return objectTransforms;
     }
 
     private void CreateAllObjectsFromSprites()
@@ -175,4 +230,5 @@ public class Tilemap3D : MonoBehaviour
         Mode = Tilemap3DModes.OFF;
         gameObject.SetActive(false);
     }
+
 }
