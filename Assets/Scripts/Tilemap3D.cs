@@ -181,7 +181,7 @@ public class Tilemap3D : MonoBehaviour
                 spriteIndex = Array.IndexOf(DoorSprites, sprite);
                 array = DoorObjects;
                 if (spriteIndex == -1) {
-                    Debug.Log("Could not find Sprite in any sprite array");
+                    //Debug.Log("Could not find Sprite in any sprite array");
                     return;
                 }
             }

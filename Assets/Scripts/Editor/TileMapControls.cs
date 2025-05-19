@@ -21,6 +21,8 @@ public class TileMapControls : EditorWindow
 
     private void OnGUI()
     {
+        SetAllAutoUpdate(autoUpdate);
+
         Tilemap3DModes[] modes = GetMapModes();
         int[] objectsAmount = GetTotalObjects();
 
@@ -72,6 +74,7 @@ public class TileMapControls : EditorWindow
 
             GUILayout.EndHorizontal();
         }
+
     }
 
     // GUI Settings STYLE

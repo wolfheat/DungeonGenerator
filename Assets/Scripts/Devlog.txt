@@ -18,6 +18,7 @@ May 2025
 18/5	* Added fast update for changes in tilemap
 		* Made buttons and text align in the Controls
 
+
 		* Make the changes for tilemaps code better
 		* Make changing rotation of stairs update the map correctly
 
