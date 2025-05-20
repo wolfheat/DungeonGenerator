@@ -26,7 +26,7 @@ public class TileMapControls : EditorWindow
         Tilemap3DModes[] modes = GetMapModes();
         int[] objectsAmount = GetTotalObjects();
 
-        int activeLayer = GetActiveLayer();
+        int activeLayer = GetActiveLayerIndex();
 
         GUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
@@ -39,6 +39,12 @@ public class TileMapControls : EditorWindow
             ToggleAutoUpdate();
         }
         GUILayout.Label(" " + autoUpdate);
+
+        // Force Update Button
+        if (GUILayout.Button("Force Update All ", GUILayout.Width(150))) {
+            ForceUpdate();
+        }
+
         GUILayout.EndHorizontal();
 
         GUILayout.Space(10);
@@ -57,7 +63,7 @@ public class TileMapControls : EditorWindow
 
             // Button Part
             if (GUILayout.Button("Toggle Level "+(-i), GUILayout.Width(150))) {
-                ToggleVisability(0);
+                ToggleVisability(-i);
             }
 
             // Mode Part
@@ -75,6 +81,12 @@ public class TileMapControls : EditorWindow
             GUILayout.EndHorizontal();
         }
 
+    }
+
+    private void ForceUpdate()
+    {
+        Tilemap3D activeLayer = GetActiveLayer();
+        activeLayer.Generate3DTilesForced();
     }
 
     // GUI Settings STYLE
@@ -96,14 +108,31 @@ public class TileMapControls : EditorWindow
         return amt;
     }
 
-    private int GetActiveLayer()
+    private Tilemap3D GetActiveLayer()
     {
         Tilemap3D[] tilemaps = GetAllTileMap3D();
 
         if (GridPaintingState.scenePaintTarget != null && GridPaintingState.scenePaintTarget.TryGetComponent(out Tilemap3D active)) {
             for (int i = 0; i < tilemaps.Length; i++) {
                 if (tilemaps[i] == active) {
-                    Debug.Log("The active tilemap is number "+i);
+                    //Debug.Log("The active tilemap is number "+i); 
+                    return active;
+                }
+            }   
+        }
+        return null;
+        //Selection.activeGameObject = delayedSelectTileMap.gameObject;
+        //GridPaintingState.scenePaintTarget = delayedSelectTileMap.gameObject;
+    }
+    
+    private int GetActiveLayerIndex()
+    {
+        Tilemap3D[] tilemaps = GetAllTileMap3D();
+
+        if (GridPaintingState.scenePaintTarget != null && GridPaintingState.scenePaintTarget.TryGetComponent(out Tilemap3D active)) {
+            for (int i = 0; i < tilemaps.Length; i++) {
+                if (tilemaps[i] == active) {
+                    //Debug.Log("The active tilemap is number "+i); 
                     return i;
                 }
             }   

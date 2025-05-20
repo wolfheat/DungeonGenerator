@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Utilities;
@@ -13,6 +11,9 @@ public enum AutoUpdateMode { OFF, ON, INSTANT,
 
 public class Tilemap3D : MonoBehaviour
 {
+
+    // If link data is set use that instead of the sprite and objects arrays
+    [SerializeField] private Tilemap3DLinksData linkData;
 
     [SerializeField] private GameObject[] TileObjects;
     [SerializeField] private GameObject[] DoorObjects;
@@ -171,29 +172,51 @@ public class Tilemap3D : MonoBehaviour
     private void CreateObjectFromSprite(Sprite sprite, Vector3Int pos, float YRotation = 0)
     {
         try {
-
+            // This uses the index the sprite has in the array and finds the corresponding index in the objects array to map the tile
             int spriteIndex = Array.IndexOf(TileSprites, sprite);
-            GameObject[] array = TileObjects;
 
-            if (spriteIndex == -1) {
-                Debug.Log("Creating door object at "+pos+" sprite: "+sprite.name);
-                // Not in 
-                spriteIndex = Array.IndexOf(DoorSprites, sprite);
-                array = DoorObjects;
-                if (spriteIndex == -1) {
-                    //Debug.Log("Could not find Sprite in any sprite array");
-                    return;
-                }
+
+            GameObject prefab;
+
+            if (linkData != null) {
+                // There is a Scriptable object of tyoe link Data assigned, use that for getting the corresponding objects
+                prefab = linkData.GetLinkObject(sprite);
+                Debug.Log("Link object received from sprite: "+sprite.name);
+            }
+            else {
+                prefab = GetIndexCorrespondingObjectPrefab(sprite);
             }
 
-            GameObject tileObject = array[spriteIndex];
+            if (prefab == null) {
+                Debug.Log("Could not find an defined object for the sprite: "+sprite.name);
+                return;
+            }
 
-            GameObject tile = Instantiate(tileObject, objectHolder.transform);
+            GameObject tile = Instantiate(prefab, objectHolder.transform);
             tile.transform.SetLocalPositionAndRotation(pos + offset, Quaternion.Euler(0, YRotation, 0));
         }
         catch (Exception e) {
             Debug.Log("Could not create Item: "+e.Message);
         }
+    }
+
+    private GameObject GetIndexCorrespondingObjectPrefab(Sprite sprite)
+    {
+        // Check if in Tiles array
+        int spriteIndex = Array.IndexOf(TileSprites, sprite);
+
+        if (spriteIndex == -1) {
+            
+            // Not in tiles array check if in Doors Array
+            spriteIndex = Array.IndexOf(DoorSprites, sprite);
+
+            if (spriteIndex == -1) {
+                // Not in any array
+                return null;
+            }
+            return DoorObjects[spriteIndex];
+        }
+        return TileObjects[spriteIndex];        
     }
 
     private void OnGUI()

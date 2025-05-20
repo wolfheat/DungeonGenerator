@@ -29,7 +29,6 @@ public class TilemapChangeWatcher : MonoBehaviour
             tilemap = GetComponent<Tilemap>();
 
 
-
         var bounds = tilemap.cellBounds;
         CacheCurrentTiles(bounds);
         EditorApplication.update += OnEditorUpdate;
