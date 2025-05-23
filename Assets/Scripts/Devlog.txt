@@ -21,7 +21,8 @@ May 2025
 		* Implemented scriptable object data for defining tiles to objects mapping
 23/5	* Moved stuff in the tile palette and added rotated versions of the doors and stairs
 		* Tidied up changeWatcher code
-		
+		* Got basic movement working
+
 
 		* Make the changes for tilemaps code better
 		* Make changing rotation of stairs update the map correctly
