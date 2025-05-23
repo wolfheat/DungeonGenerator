@@ -49,5 +49,5 @@ MonoBehaviour:
     gameObject: {fileID: 3348003693128331038, guid: db6fe001a97255247b4da31e056f7a1d, type: 3}
   - sprite: {fileID: -399128091, guid: baed6a31b7da7f54f91fcee43a577617, type: 3}
     gameObject: {fileID: 3348003693128331038, guid: dd5397e33111ddb4190a2f6398db86a0, type: 3}
-  - sprite: {fileID: 0}
-    gameObject: {fileID: 3348003693128331038, guid: aa6b66d74a99fc345af2c6f1e3fe9b43, type: 3}
+  - sprite: {fileID: 1288432576, guid: baed6a31b7da7f54f91fcee43a577617, type: 3}
+    gameObject: {fileID: 3348003693128331038, guid: de97f57d2fdf48b4fa096c3989bbae5a, type: 3}

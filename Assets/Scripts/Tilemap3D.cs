@@ -181,7 +181,7 @@ public class Tilemap3D : MonoBehaviour
             if (linkData != null) {
                 // There is a Scriptable object of tyoe link Data assigned, use that for getting the corresponding objects
                 prefab = linkData.GetLinkObject(sprite);
-                Debug.Log("Link object received from sprite: "+sprite.name);
+                //Debug.Log("Link object received from sprite: "+sprite.name);
             }
             else {
                 prefab = GetIndexCorrespondingObjectPrefab(sprite);
