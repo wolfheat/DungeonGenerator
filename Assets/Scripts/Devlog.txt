@@ -22,6 +22,8 @@ May 2025
 23/5	* Moved stuff in the tile palette and added rotated versions of the doors and stairs
 		* Tidied up changeWatcher code
 		* Got basic movement working
+		* Implemented moving up and down in stairs
+
 
 
 		* Make the changes for tilemaps code better

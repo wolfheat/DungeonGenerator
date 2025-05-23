@@ -11,6 +11,7 @@ public class PickUpController : MonoBehaviour
 
     private LayerMask doorLayerMask;
     private LayerMask wallAndDoorLayerMask;
+    private LayerMask stairLayerMasks;
     public List<Collider> Walls { get; set; } = new List<Collider>();
 
     private WaitForSeconds wait = new WaitForSeconds(0.1f);
@@ -19,6 +20,7 @@ public class PickUpController : MonoBehaviour
     {
         doorLayerMask = LayerMask.GetMask("Door");
         wallAndDoorLayerMask = LayerMask.GetMask("Wall") | doorLayerMask;
+        stairLayerMasks = LayerMask.GetMask("StairUp") | LayerMask.GetMask("StairDown");
     }
 
     private void OnTriggerExit(Collider other)
@@ -69,5 +71,25 @@ public class PickUpController : MonoBehaviour
             return false;
         }
         return true;
+    }
+
+    internal bool IsStair(Vector3 target, out Vector3 newTarget)
+    {
+        newTarget = target;
+        // Get the direction the player are and move the overlapBox in that direction
+        Collider[] colliders = Physics.OverlapBox(target, new Vector3(0.4f, 0.4f, 0.4f), Quaternion.identity, stairLayerMasks);
+
+        if (colliders.Length > 0) { 
+            if (colliders[0].gameObject.layer == LayerMask.NameToLayer("StairUp")) { // Stair UP
+                Debug.Log("Stair UP");
+                newTarget = target + colliders[0].transform.right * 2f + Vector3.up;
+            }
+            else { // Stair Down
+                Debug.Log("Stair DOWN");
+                newTarget = target - colliders[0].transform.right * 2f + Vector3.down;
+            }
+            return true;
+        }        
+        return false;
     }
 }

@@ -16,8 +16,8 @@ TagManager:
   - Door
   - PickupController
   - Mock
-  - 
-  - 
+  - StairUp
+  - StairDown
   - 
   - 
   - 

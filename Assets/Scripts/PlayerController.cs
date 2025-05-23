@@ -152,6 +152,14 @@ public class PlayerController : MonoBehaviour
 
                 if (Mocks.Instance.IsTileFree(Convert.V3ToV2Int(target)) && pickupController.IsTileFree(this.transform.position,target)) {
                     lastAction = savedAction;
+                    // Check for stair?
+
+                    if (pickupController.IsStair(target, out Vector3 newTarget)) {
+                        Debug.Log("Moving Into a stair");
+                        Debug.Log("Exit point moves to "+newTarget);
+                        target = newTarget;
+                    }
+
                     //Debug.Log("Storing saved Movement as Last movement and start new movement");
                     //Debug.Log("Moving to " + target+" "+savedAction.moveType);
                     StartCoroutine(Move(target));
