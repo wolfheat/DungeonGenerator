@@ -28,6 +28,32 @@ May 2025
 26/5	* Started adding back Items tilemap for doors etc
 		* Made a enable class that enables all tileObjects when game is run
 		* Started working on getting toggle between tilemaps if any mode is selected
+27/5	* Reworked the generator dungeon window. And system for handeling active maps
+
+		// Fix the undo registration
+
+		void Generate3DTilesForced()
+{
+    // Optional: group everything the watcher does into one undo step
+    int group = Undo.GetCurrentGroup();
+    Undo.IncrementCurrentGroup();
+    Undo.SetCurrentGroupName("Generate 3-D Tiles");
+
+    foreach (var tile in tilesToInstantiate)
+    {
+        GameObject go = /* your instantiation logic */;
+        Undo.RegisterCreatedObjectUndo(go, "Create 3-D Tile");
+        // If you parent it, do that through Undo as well
+        Undo.SetTransformParent(go.transform, parentTransform, "Parent 3-D Tile");
+    }
+
+    // If you delete old ones
+    foreach (var old in objectsToRemove)
+        Undo.DestroyObjectImmediate(old);      // registers a deletable step
+
+    Undo.CollapseUndoOperations(group);
+}
+
 
 
 

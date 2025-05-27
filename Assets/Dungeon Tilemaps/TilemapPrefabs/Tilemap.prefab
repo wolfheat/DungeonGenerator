@@ -2575,49 +2575,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94c420d7477a61242b6d25de8ad8fda5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linkData: {fileID: 11400000, guid: 5f7e64e22813765428a4c43846659379, type: 2}
-  TileObjects:
-  - {fileID: 3348003693128331038, guid: f19cbab21149c894b97a5839de057960, type: 3}
-  - {fileID: 3348003693128331038, guid: 035d9105705a7f0479e73260825da43b, type: 3}
-  - {fileID: 3348003693128331038, guid: 822390ad7e702e54a87a21177958fbfa, type: 3}
-  - {fileID: 3348003693128331038, guid: 009b5194b4a9bd1499b445c871cc848c, type: 3}
-  - {fileID: 3348003693128331038, guid: eea43debe53b8b545aa37461d5ff79db, type: 3}
-  - {fileID: 3348003693128331038, guid: d1793c9acb7ff244b8b03ee564bfb6bd, type: 3}
-  - {fileID: 3348003693128331038, guid: 284dc344cf08f77429641b7a2aafc32b, type: 3}
-  - {fileID: 3348003693128331038, guid: 2570d78e88932bb4ea3612e480ef257f, type: 3}
-  - {fileID: 3348003693128331038, guid: a30fe0a9b1656654291586bcb683b9a5, type: 3}
-  - {fileID: 3348003693128331038, guid: de2c84855d300ff479d7c6ec5ac80661, type: 3}
-  - {fileID: 3348003693128331038, guid: 5ce612cc41cb871488d73a3a9c679cf5, type: 3}
-  - {fileID: 3348003693128331038, guid: 5d59161b29129b34482806679fbeac25, type: 3}
-  - {fileID: 3348003693128331038, guid: 4716e45fc7f65104dbd0728de3276252, type: 3}
-  - {fileID: 3348003693128331038, guid: aa6b66d74a99fc345af2c6f1e3fe9b43, type: 3}
-  - {fileID: 3348003693128331038, guid: d637d00fb6efd9740afd509b934eb32c, type: 3}
-  DoorObjects:
-  - {fileID: 3348003693128331038, guid: db6fe001a97255247b4da31e056f7a1d, type: 3}
-  - {fileID: 3348003693128331038, guid: 58ac85e0bcd07a642b47969e3326ff0c, type: 3}
-  - {fileID: 3348003693128331038, guid: de97f57d2fdf48b4fa096c3989bbae5a, type: 3}
-  - {fileID: 3348003693128331038, guid: dd5397e33111ddb4190a2f6398db86a0, type: 3}
-  TileSprites:
-  - {fileID: -1238933728272178944, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -4637172546458061636, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: 1404196382344981941, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -6537453368205885854, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -3932762474534642510, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -38647862416911262, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: 9158922217335370285, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -2913927307954446974, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -8314697479797604436, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -8560909203809222747, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -2860982009417361707, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: 833101472512629755, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -757774576, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: 1187656465, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  - {fileID: -1139251843, guid: 4e794009527fa49a7a0e11880aaa3a50, type: 3}
-  DoorSprites:
-  - {fileID: 102158722, guid: baed6a31b7da7f54f91fcee43a577617, type: 3}
-  - {fileID: 578422522, guid: baed6a31b7da7f54f91fcee43a577617, type: 3}
-  - {fileID: 1288432576, guid: baed6a31b7da7f54f91fcee43a577617, type: 3}
-  - {fileID: -399128091, guid: baed6a31b7da7f54f91fcee43a577617, type: 3}
+  linkDatas:
+  - {fileID: 11400000, guid: 5f7e64e22813765428a4c43846659379, type: 2}
+  - {fileID: 11400000, guid: 38c69cc43e24a6248abea272297514e3, type: 2}
   objectHolder: {fileID: 6517521080702901239}
   transparentBackground: {fileID: 8403516057969741705}
   renderer: {fileID: 6540591193028796242}

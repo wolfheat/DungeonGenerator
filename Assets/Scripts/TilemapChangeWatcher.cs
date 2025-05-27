@@ -28,12 +28,34 @@ public class TilemapChangeWatcher : MonoBehaviour
         var bounds = tilemap.cellBounds;
         CacheCurrentTiles(bounds, GetTilemapRotations(tilemap,bounds));
         EditorApplication.update += OnEditorUpdate;
+
+#if UNITY_EDITOR
+        Undo.undoRedoPerformed += RebuildAfterUndo;
+#endif
+
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
+
+#if UNITY_EDITOR
+        Undo.undoRedoPerformed -= RebuildAfterUndo;
+#endif
+
         EditorApplication.update -= OnEditorUpdate;
     }
+
+#if UNITY_EDITOR
+    private void RebuildAfterUndo()
+    {
+        Debug.Log("REBUILD AFTER UNDO");
+        // Tilemap has already been restored by Unity at this point
+        OnEditorUpdate();
+
+
+        //Generate3DTilesForced();   // destroy + recreate helpers
+    }
+#endif
 
     private void OnEditorUpdate()
     {

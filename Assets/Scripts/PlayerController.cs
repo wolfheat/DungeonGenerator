@@ -61,14 +61,14 @@ public class PlayerController : MonoBehaviour
     {
         // set up input actions
         //Inputs.Instance.Controls.Player.Move.performed += NewMoveInput;
-        Inputs.Instance.Controls.Player.Step.performed += Step;
-        Inputs.Instance.Controls.Player.SideStep.performed += SideStep;
-        Inputs.Instance.Controls.Player.Turn.performed += TurnPerformed;
-        Inputs.Instance.Controls.Player.Click.performed += InterractWith;
-        Inputs.Instance.Controls.Player.Space.performed += InterractWith;
-        Inputs.Instance.Controls.UI.Enter.performed += InterractWith;
-        Inputs.Instance.Controls.Player.RightClick.performed += RightClick;
-        Inputs.Instance.Controls.Player.RightClickKeysSubstitute.performed += RightClick;
+        Inputs.Instance.PlayerControls.Player.Step.performed += Step;
+        Inputs.Instance.PlayerControls.Player.SideStep.performed += SideStep;
+        Inputs.Instance.PlayerControls.Player.Turn.performed += TurnPerformed;
+        Inputs.Instance.PlayerControls.Player.Click.performed += InterractWith;
+        Inputs.Instance.PlayerControls.Player.Space.performed += InterractWith;
+        Inputs.Instance.PlayerControls.UI.Enter.performed += InterractWith;
+        Inputs.Instance.PlayerControls.Player.RightClick.performed += RightClick;
+        Inputs.Instance.PlayerControls.Player.RightClickKeysSubstitute.performed += RightClick;
         //Inputs.Instance.Controls.Player.Y.performed += InstantDeath;
         //TakeFireDamage.PlayerTakeFireDamage += FireDamage;
         //playerAnimationController.HitComplete += HitWithTool;
@@ -77,14 +77,14 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         //Inputs.Instance.Controls.Player.Move.performed -= NewMoveInput;
-        Inputs.Instance.Controls.Player.Step.performed -= Step;
-        Inputs.Instance.Controls.Player.SideStep.performed -= SideStep;
-        Inputs.Instance.Controls.Player.Turn.performed -= TurnPerformed;
-        Inputs.Instance.Controls.Player.Click.performed -= InterractWith;
-        Inputs.Instance.Controls.Player.Space.performed -= InterractWith;
-        Inputs.Instance.Controls.UI.Enter.performed -= InterractWith;
-        Inputs.Instance.Controls.Player.RightClick.performed -= RightClick;
-        Inputs.Instance.Controls.Player.RightClickKeysSubstitute.performed -= RightClick;
+        Inputs.Instance.PlayerControls.Player.Step.performed -= Step;
+        Inputs.Instance.PlayerControls.Player.SideStep.performed -= SideStep;
+        Inputs.Instance.PlayerControls.Player.Turn.performed -= TurnPerformed;
+        Inputs.Instance.PlayerControls.Player.Click.performed -= InterractWith;
+        Inputs.Instance.PlayerControls.Player.Space.performed -= InterractWith;
+        Inputs.Instance.PlayerControls.UI.Enter.performed -= InterractWith;
+        Inputs.Instance.PlayerControls.Player.RightClick.performed -= RightClick;
+        Inputs.Instance.PlayerControls.Player.RightClickKeysSubstitute.performed -= RightClick;
         //playerAnimationController.HitComplete -= HitWithTool;
         //TakeFireDamage.PlayerTakeFireDamage -= FireDamage;
     }
@@ -191,7 +191,7 @@ public class PlayerController : MonoBehaviour
     {
         //if (GameState.state == GameStates.Paused || Stats.Instance.IsDead) return false; // No input while paused
 
-        float movement = Inputs.Instance.Controls.Player.Turn.ReadValue<float>();
+        float movement = Inputs.Instance.PlayerControls.Player.Turn.ReadValue<float>();
         if (movement == 0) return false;
 
         MoveAction moveAction = new MoveAction(MoveActionType.Rotate, (int)movement);
@@ -214,7 +214,7 @@ public class PlayerController : MonoBehaviour
         //if (GameState.state == GameStates.Paused || Stats.Instance.IsDead) return false; // No input while paused
 
         // Return if no movement input currently held 
-        float movement = Inputs.Instance.Controls.Player.SideStep.ReadValue<float>();
+        float movement = Inputs.Instance.PlayerControls.Player.SideStep.ReadValue<float>();
         if (movement == 0) return false;
 
         // Special case Do not overwrite with SideStep if last time player moved it was a SideStep, and there is a Step stored
@@ -241,7 +241,7 @@ public class PlayerController : MonoBehaviour
 
 
         // Return if no movement input currently held 
-        float movement = Inputs.Instance.Controls.Player.Step.ReadValue<float>();
+        float movement = Inputs.Instance.PlayerControls.Player.Step.ReadValue<float>();
         if (movement == 0) return false;
 
         // Special case Do not overwrite with Step if last time player moved it was a Step, and there is a Sidestep stored
@@ -374,7 +374,7 @@ public class PlayerController : MonoBehaviour
             HeldMovementInput();
         //pickupController.UpdateColliders();
 
-        if (Inputs.Instance.Controls.Player.Click.IsPressed() || Inputs.Instance.Controls.Player.Space.IsPressed()) {
+        if (Inputs.Instance.PlayerControls.Player.Click.IsPressed() || Inputs.Instance.PlayerControls.Player.Space.IsPressed()) {
             CenterPlayerPosition();
             Debug.Log("Mouse is held, interact");
             InterractWith(true);
@@ -412,7 +412,7 @@ public class PlayerController : MonoBehaviour
         //transform.position = new Vector3(Stats.Instance.SavedStartPosition.x, 0, Stats.Instance.SavedStartPosition.z);
         
 
-        transform.position = FindFirstObjectByType<StartPositioner>().transform.position;
+        transform.position = FindFirstObjectByType<StartPositioner>().transform.position+GameController.Instance.GridOffset;
         
         Debug.Log("Player moved to " + transform.position);
 

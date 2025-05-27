@@ -14,13 +14,13 @@ public class Tilemap3D : MonoBehaviour
 {
 
     // If link data is set use that instead of the sprite and objects arrays
-    [SerializeField] private Tilemap3DLinksData linkData;
+    [SerializeField] private Tilemap3DLinksData[] linkDatas;
 
-    [SerializeField] private GameObject[] TileObjects;
-    [SerializeField] private GameObject[] DoorObjects;
+    //[SerializeField] private GameObject[] TileObjects;
+    //[SerializeField] private GameObject[] DoorObjects;
 
-    [SerializeField] private Sprite[] TileSprites;
-    [SerializeField] private Sprite[] DoorSprites;
+    //[SerializeField] private Sprite[] TileSprites;
+    //[SerializeField] private Sprite[] DoorSprites;
 
     [SerializeField] private GameObject objectHolder;
     [SerializeField] private GameObject transparentBackground;
@@ -121,7 +121,7 @@ public class Tilemap3D : MonoBehaviour
 
             if (sprite != null) {
                 // There is a sprite here get its index = type
-                int index = Array.IndexOf(TileSprites,sprite);
+                //int index = Array.IndexOf(TileSprites,sprite);
                 //Debug.Log("Update or create object ID: "+index+" at "+pos);
 
                 // Create an Object of that type
@@ -191,18 +191,17 @@ public class Tilemap3D : MonoBehaviour
     {
         try {
             // This uses the index the sprite has in the array and finds the corresponding index in the objects array to map the tile
-            int spriteIndex = Array.IndexOf(TileSprites, sprite);
+            //int spriteIndex = Array.IndexOf(TileSprites, sprite);
 
+            GameObject prefab = null;
 
-            GameObject prefab;
-
-            if (linkData != null) {
+            if (linkDatas.Length >= 0) {
                 // There is a Scriptable object of tyoe link Data assigned, use that for getting the corresponding objects
-                prefab = linkData.GetLinkObject(sprite);
-                //Debug.Log("Link object received from sprite: "+sprite.name);
-            }
-            else {
-                prefab = GetIndexCorrespondingObjectPrefab(sprite);
+                foreach (var linkData in linkDatas) {
+                    prefab = linkData.GetLinkObject(sprite);
+                    if (prefab != null)
+                        break;       
+                }                
             }
 
             if (prefab == null) {
@@ -210,31 +209,13 @@ public class Tilemap3D : MonoBehaviour
                 return;
             }
 
+            // Instantiating the corresponding object
             GameObject tile = Instantiate(prefab, objectHolder.transform);
             tile.transform.SetLocalPositionAndRotation(pos + offset, Quaternion.Euler(0, YRotation, 0));
         }
         catch (Exception e) {
             Debug.Log("Could not create Item: "+e.Message);
         }
-    }
-
-    private GameObject GetIndexCorrespondingObjectPrefab(Sprite sprite)
-    {
-        // Check if in Tiles array
-        int spriteIndex = Array.IndexOf(TileSprites, sprite);
-
-        if (spriteIndex == -1) {
-            
-            // Not in tiles array check if in Doors Array
-            spriteIndex = Array.IndexOf(DoorSprites, sprite);
-
-            if (spriteIndex == -1) {
-                // Not in any array
-                return null;
-            }
-            return DoorObjects[spriteIndex];
-        }
-        return TileObjects[spriteIndex];        
     }
 
     private void OnGUI()

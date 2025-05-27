@@ -5,7 +5,7 @@ namespace Wolfheat.Inputs
 {
     public class Inputs : MonoBehaviour
     {
-        public Controls Controls { get; set; }
+        public Controls PlayerControls { get; set; }
         public InputAction Actions { get; set; }
 
         public static Inputs Instance { get; private set; }
@@ -16,8 +16,8 @@ namespace Wolfheat.Inputs
             //SavingUtility.LoadingComplete += LoadingComplete;
 
 #if UNITY_EDITOR
-    Controls.Player.T.performed += TPressed;
-    Controls.Player.Y.performed += YPressed;
+    PlayerControls.Player.T.performed += TPressed;
+    PlayerControls.Player.Y.performed += YPressed;
 #endif
         }
 
@@ -34,9 +34,9 @@ namespace Wolfheat.Inputs
 
         private void OnDisable()
         {
-            Controls.Player.T.performed -= TPressed;
-            Controls.Player.Y.performed -= YPressed;
-            Controls.Disable();
+            PlayerControls.Player.T.performed -= TPressed;
+            PlayerControls.Player.Y.performed -= YPressed;
+            PlayerControls.Disable();
         }
 
         public void YPressed(InputAction.CallbackContext context)
@@ -60,8 +60,8 @@ namespace Wolfheat.Inputs
             }
             Instance = this;
 
-            Controls = new Controls();
-            Controls.Enable();
+            PlayerControls = new Controls();
+            PlayerControls.Enable();
         }
     }
 }
