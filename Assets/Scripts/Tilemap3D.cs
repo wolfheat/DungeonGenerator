@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using Utilities;
 
-public enum Tilemap3DModes{OFF,TileMap,Objects }
-public enum AutoUpdateMode { OFF, ON, INSTANT,
-    INSTANTFAST
-}
+//public enum ViewMode{OFF,TileMap,Objects }
+public enum AutoUpdateMode { OFF, ON, INSTANT, INSTANTFAST }
+public enum ViewMode { Objects, TileMap}
+public enum MapMode { Floor, Items, Any }
+
 
 public class Tilemap3D : MonoBehaviour
 {
@@ -24,29 +25,45 @@ public class Tilemap3D : MonoBehaviour
     [SerializeField] private GameObject objectHolder;
     [SerializeField] private GameObject transparentBackground;
     [SerializeField] private Renderer renderer;
+
+    [SerializeField] private bool itemsTilemap = false;
     //[SerializeField] private bool autoUpdate = false;
 
     public GameObject GetHolder => objectHolder;
     public GameObject GetTransBackground => transparentBackground;
 
-    public Tilemap3DModes Mode { get; set; } = Tilemap3DModes.OFF;
+    public ViewMode Mode { get; set; } = ViewMode.Objects;
     public AutoUpdateMode UpdateMode { get; set; } = AutoUpdateMode.OFF;
+    public bool HoldsItems => itemsTilemap;
 
+
+
+    public void SetMode(ViewMode mode)
+    {
+        switch (mode) {
+            case ViewMode.Objects:
+                ObjectView();
+                break;
+            case ViewMode.TileMap:
+                TileMapView();
+                break;
+        }
+    }
     public void TileMapView() 
     {
-        Mode = Tilemap3DModes.TileMap;
+        Mode = ViewMode.TileMap;
         // Show TileMap
         objectHolder.SetActive(false);
         renderer.enabled = true;
         transparentBackground.SetActive(true);
     }
     
-    public void ObjectView(bool autoUpdate) 
+    public void ObjectView(bool autoUpdate = true) 
     {
         if (autoUpdate)
             Generate3DTilesForced();
 
-        Mode = Tilemap3DModes.Objects;
+        Mode = ViewMode.Objects;
         // Show Tile Objects
         renderer.enabled = false;
         transparentBackground.SetActive(false);
@@ -94,7 +111,7 @@ public class Tilemap3D : MonoBehaviour
             
             Vector2Int pos = changedPositions[i];
 
-            //Debug.Log("Change at: "+pos);
+            Debug.Log("Change at: "+pos);
             Sprite sprite = tilemap.GetSprite(new Vector3Int(pos.x,pos.y,0));
             // Find the current object and delete it
             if (objects[i] != null) {
@@ -234,23 +251,8 @@ public class Tilemap3D : MonoBehaviour
         //SetCurrentMode();        
     }
 
-    public void SetCurrentMode()
-    {
-        Debug.Log("SetCurrent mode set for "+gameObject.name);
-        // Only runs when object is enabled
-        if(!this.gameObject.activeSelf)
-            Mode = Tilemap3DModes.OFF;
-        else if (this.GetComponent<Renderer>().enabled)
-            Mode = Tilemap3DModes.TileMap;
-        else
-            Mode = Tilemap3DModes.Objects;
-
-        Debug.Log("Mode: "+Mode); 
-    }
-
     public void TurnOff()
     {
-        Mode = Tilemap3DModes.OFF;
         gameObject.SetActive(false);
     }
 

@@ -153,16 +153,18 @@ public class PlayerController : MonoBehaviour
                 if (Mocks.Instance.IsTileFree(Convert.V3ToV2Int(target)) && pickupController.IsTileFree(this.transform.position,target)) {
                     lastAction = savedAction;
                     // Check for stair?
+                    float movementTimeMultiplier = 1f;
 
                     if (pickupController.IsStair(target, out Vector3 newTarget)) {
                         Debug.Log("Moving Into a stair");
                         Debug.Log("Exit point moves to "+newTarget);
                         target = newTarget;
+                        movementTimeMultiplier = 3.16f;
                     }
 
                     //Debug.Log("Storing saved Movement as Last movement and start new movement");
                     //Debug.Log("Moving to " + target+" "+savedAction.moveType);
-                    StartCoroutine(Move(target));
+                    StartCoroutine(Move(target, movementTimeMultiplier));
                 }
                 else {
                     CenterPlayerPosition();
@@ -288,7 +290,7 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private IEnumerator Move(Vector3 target)
+    private IEnumerator Move(Vector3 target, float timeMultiplier = 1f)
     {
         // Used to define what player moves above
         //int stepSoundFromTerrain = TerrainChecker.ProminentTerrainType(transform.position,LevelCreator.Instance.ActiveTerrain);
@@ -305,9 +307,9 @@ public class PlayerController : MonoBehaviour
         Vector3 start = transform.position;
         Vector3 end = target;
         timer = 0;
-        while (timer < MoveTime) {
+        while (timer < MoveTime * timeMultiplier) {
             yield return null;
-            transform.position = Vector3.LerpUnclamped(start, end, timer / (MoveTime));
+            transform.position = Vector3.LerpUnclamped(start, end, timer / (MoveTime * timeMultiplier));
             timer += Time.deltaTime;
         }
         //Debug.Log("Moving player "+(transform.position-target).magnitude);

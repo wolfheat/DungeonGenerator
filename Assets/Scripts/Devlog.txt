@@ -23,6 +23,17 @@ May 2025
 		* Tidied up changeWatcher code
 		* Got basic movement working
 		* Implemented moving up and down in stairs
+		* Adjusted speed in stairs
+25/5	* Fixed not reading walls overlapbox issue
+26/5	* Started adding back Items tilemap for doors etc
+		* Made a enable class that enables all tileObjects when game is run
+
+
+
+
+		// Have developers able to set instant stairs?
+
+		// Implement doors?
 
 
 

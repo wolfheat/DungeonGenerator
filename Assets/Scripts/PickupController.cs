@@ -15,6 +15,7 @@ public class PickUpController : MonoBehaviour
     public List<Collider> Walls { get; set; } = new List<Collider>();
 
     private WaitForSeconds wait = new WaitForSeconds(0.1f);
+    private Vector3 pickupBoxExtents = new Vector3(0.43f, 0.43f, 0.43f);
 
     private void Start()
     {
@@ -58,7 +59,7 @@ public class PickUpController : MonoBehaviour
         Vector3 overlapBoxPosition = target + directionVector * 0.1f;
 
         // Get the direction the player are and move the overlapBox in that direction
-        Collider[] colliders = Physics.OverlapBox(overlapBoxPosition, new Vector3(0.4f, 0.4f, 0.4f),Quaternion.identity,wallAndDoorLayerMask);
+        Collider[] colliders = Physics.OverlapBox(overlapBoxPosition, pickupBoxExtents, Quaternion.identity,wallAndDoorLayerMask);
 
         if(showColliderBox) {
             GameObject tempBox = Instantiate(colliderShowPrefab);
@@ -77,7 +78,7 @@ public class PickUpController : MonoBehaviour
     {
         newTarget = target;
         // Get the direction the player are and move the overlapBox in that direction
-        Collider[] colliders = Physics.OverlapBox(target, new Vector3(0.4f, 0.4f, 0.4f), Quaternion.identity, stairLayerMasks);
+        Collider[] colliders = Physics.OverlapBox(target, pickupBoxExtents, Quaternion.identity, stairLayerMasks);
 
         if (colliders.Length > 0) { 
             if (colliders[0].gameObject.layer == LayerMask.NameToLayer("StairUp")) { // Stair UP
