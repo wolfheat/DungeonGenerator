@@ -8,7 +8,14 @@ public class Tilemap3DLevel : MonoBehaviour
     public Tilemap3D Tilemap3DFloor => floorTilemap3D;
     public Tilemap3D Tilemap3DItems => itemsTilemap3D;
 
-    public Tilemap3D SetViewAndMapMode(ViewMode activeViewMode, MapMode activeMapMode)
+    public Tilemap3D GetNextTilemap(Tilemap3D active)
+    {
+        if(active == floorTilemap3D)
+            return itemsTilemap3D;
+        return floorTilemap3D;
+    }
+
+public Tilemap3D SetViewAndMapMode(ViewMode activeViewMode, MapMode activeMapMode)
     {
         // Set the Map and View mode and send back the tilemap to set active
         floorTilemap3D.SetMode(activeViewMode);

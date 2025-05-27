@@ -29,6 +29,7 @@ public class Tilemap3D : MonoBehaviour
     [SerializeField] private bool itemsTilemap = false;
     //[SerializeField] private bool autoUpdate = false;
 
+    public int GetObjectsAmount => objectHolder.transform.childCount;
     public GameObject GetHolder => objectHolder;
     public GameObject GetTransBackground => transparentBackground;
 

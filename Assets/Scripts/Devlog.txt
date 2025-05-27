@@ -27,7 +27,7 @@ May 2025
 25/5	* Fixed not reading walls overlapbox issue
 26/5	* Started adding back Items tilemap for doors etc
 		* Made a enable class that enables all tileObjects when game is run
-
+		* Started working on getting toggle between tilemaps if any mode is selected
 
 
 

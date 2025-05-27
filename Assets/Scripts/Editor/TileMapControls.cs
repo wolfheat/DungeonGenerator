@@ -37,17 +37,16 @@ public class TileMapControls : EditorWindow
         return style;
     }
 
-    private int[] GetTotalObjects()
+    private int[][] GetTotalObjects(Tilemap3DLevel[] tilemapsLevels)
     {
-        Tilemap3D[] tilemaps = GetAllTileMap3D();
-        List<int> amt = new();
-        for (int i = 0; i < tilemaps.Length; i++) {
-            Tilemap3D tileMap = tilemaps[i];
-            if (tileMap.HoldsItems)
-                continue;
-            amt.Add(tileMap.GetHolder.transform.childCount);
+        int[][] ans = new int[tilemapsLevels.Length][];
+
+        for (int i = 0; i < tilemapsLevels.Length; i++) {
+            ans[i] = new int[2];
+            ans[i][0] = tilemapsLevels[i].Tilemap3DFloor.GetObjectsAmount;
+            ans[i][1] = tilemapsLevels[i].Tilemap3DItems.GetObjectsAmount;
         }
-        return amt.ToArray();
+        return ans;
     }
 
     private Tilemap3D GetActiveLayer()
@@ -67,21 +66,19 @@ public class TileMapControls : EditorWindow
         //GridPaintingState.scenePaintTarget = delayedSelectTileMap.gameObject;
     }
     
-    private int GetActiveLayerIndex()
-    {
-        Tilemap3D[] tilemaps = GetAllTileMap3D();
-
+    private int[] GetActiveLayerIndex(Tilemap3DLevel[] tilemap3DLevels)
+    {        
         if (GridPaintingState.scenePaintTarget != null && GridPaintingState.scenePaintTarget.TryGetComponent(out Tilemap3D active)) {
-            for (int i = 0; i < tilemaps.Length; i++) {
-                if (tilemaps[i] == active) {
-                    //Debug.Log("The active tilemap is number "+i); 
-                    return i;
+            for (int i = 0; i < tilemap3DLevels.Length; i++) {
+                if (tilemap3DLevels[i].Tilemap3DFloor == active) {
+                    return new int[] { i, 0 };
+                }
+                if (tilemap3DLevels[i].Tilemap3DItems == active) {
+                    return new int[] { i, 1 };
                 }
             }   
         }
-        return 0;
-        //Selection.activeGameObject = delayedSelectTileMap.gameObject;
-        //GridPaintingState.scenePaintTarget = delayedSelectTileMap.gameObject;
+        return new int[] {0,0};
     }
 
     // Toggle modes
@@ -183,22 +180,36 @@ public class TileMapControls : EditorWindow
 
         // To begin with make just the selected layer show??
 
+        // If this is clicked for an already selected tilemap - activate the next one = items?
         
-        // Defines what tilemap to set as active
-        Tilemap3D delayedSelectTileMap = null;
+        
+
+            // Defines what tilemap to set as active
+            Tilemap3D delayedSelectTileMap = null;
 
 
-        foreach (var item in levels) {
-            Debug.Log("Item position = "+ Mathf.RoundToInt(item.transform.position.y));
-            if(Mathf.RoundToInt(item.transform.position.y) == -layer) {
-                if(!item.gameObject.activeSelf)
-                    item.gameObject.SetActive(true);
-                delayedSelectTileMap = item.SetViewAndMapMode(activeViewMode, activeMapMode);
+        foreach (var level in levels) {
+            Debug.Log("Item position = "+ Mathf.RoundToInt(level.transform.position.y));
+            if(Mathf.RoundToInt(level.transform.position.y) == -layer) {
+                if(!level.gameObject.activeSelf)
+                    level.gameObject.SetActive(true);
+                else {
+                    // level is already active if mode is all go to next?
+                    if(activeMapMode == MapMode.Any) {
+                        if (GridPaintingState.scenePaintTarget != null && GridPaintingState.scenePaintTarget.TryGetComponent(out Tilemap3D active)) {
+                            // There is a tilemap that is active
+                            delayedSelectTileMap = level.GetNextTilemap(active);
+                        }
+                    }
+                }
+
+                if(delayedSelectTileMap == null)
+                    delayedSelectTileMap = level.SetViewAndMapMode(activeViewMode, activeMapMode);
                 Debug.Log("layer "+layer+" set as active");
             }
             else {
                 // Hide it if not the active one
-                item.gameObject.SetActive(false);
+                level.gameObject.SetActive(false);
             }
         }
 
@@ -286,15 +297,17 @@ public class TileMapControls : EditorWindow
 
 
         ViewMode[] modes = GetNonItemsMapModes();
-        int[] objectsAmount = GetTotalObjects();
 
-        int activeLayer = GetActiveLayerIndex();
+        // Check that this is doing what it should
+        int[][] objectsAmount = GetTotalObjects(tilemap3DLevels);
+
+        int[] activeTilemap = GetActiveLayerIndex(tilemap3DLevels);
+
+        //int activeLayer = GetActiveLayerIndex();
 
         Paint_GUIHeader();
 
         Paint_ModesButtons();
-
-
 
         // Header Row
         GUILayout.BeginHorizontal();
@@ -304,11 +317,9 @@ public class TileMapControls : EditorWindow
         GUILayout.Label("Active", CenterLabelStyle(), GUILayout.Width(70));
         GUILayout.EndHorizontal();
 
-
         // Settings View
 
         // Object/Tilemaps - Level/Items
-
 
         // NEW BUTTON SYSTEM
 
@@ -328,10 +339,13 @@ public class TileMapControls : EditorWindow
             if (modes.Length >= 1) GUILayout.Label("" + modes[i], CenterLabelStyle(), GUILayout.Width(100));
 
             // Objects Part
-            if (modes.Length >= 1) GUILayout.Label("" + objectsAmount[i], CenterLabelStyle(), GUILayout.Width(100));
+            if (modes.Length >= 1) GUILayout.Label(objectsAmount[i][0] + " + " + objectsAmount[i][1], CenterLabelStyle(), GUILayout.Width(100));
 
             // Active part
-            if (GUILayout.Button(activeLayer == i ? "ACTIVE" : "---", GUILayout.Width(70))) {
+            if (GUILayout.Button(activeTilemap[0] == i ?
+                (activeTilemap[1] == 0 ? "FLOOR" : "ITEMS")
+                : "", 
+                GUILayout.Width(70))) {
                 // Request this layer to become active
                 ToggleActive(i);
             }
