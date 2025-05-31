@@ -1,6 +1,12 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
+using System;
+using UnityEngine.SceneManagement;
+using System.Linq;
+
+
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -16,6 +22,8 @@ public class TilemapChangeWatcher : MonoBehaviour
 
     Dictionary<Vector3Int, Sprite> previousSprites = new();
 
+
+
     private void OnEnable()
     {
         if (tilemap3d == null)
@@ -27,7 +35,7 @@ public class TilemapChangeWatcher : MonoBehaviour
 
         var bounds = tilemap.cellBounds;
         CacheCurrentTiles(bounds, GetTilemapRotations(tilemap,bounds));
-        EditorApplication.update += OnEditorUpdate;
+        EditorApplication.update += EditorApplicationUpdate;
 
 #if UNITY_EDITOR
         Undo.undoRedoPerformed += RebuildAfterUndo;
@@ -42,32 +50,62 @@ public class TilemapChangeWatcher : MonoBehaviour
         Undo.undoRedoPerformed -= RebuildAfterUndo;
 #endif
 
-        EditorApplication.update -= OnEditorUpdate;
+        EditorApplication.update -= EditorApplicationUpdate;
     }
 
 #if UNITY_EDITOR
     private void RebuildAfterUndo()
     {
-        Debug.Log("REBUILD AFTER UNDO");
         // Tilemap has already been restored by Unity at this point
-        OnEditorUpdate();
 
+        if (DeleteAllCopyItemsInRoot()) {
+            Debug.Log("REBUILD AFTER UNDO - Deleted items in Root - happened in tilemap "+gameObject.name);
+        }
 
-        //Generate3DTilesForced();   // destroy + recreate helpers
+        // Executed in every tilemap so Rebuilds all tilemaps in game
+        OnEditorUndoUpdate();
+    }
+
+    private bool DeleteAllCopyItemsInRoot()
+    {
+        GameObject[] rootObjects = SceneManager.GetActiveScene().GetRootGameObjects().Where(x => x.name.Contains("(Clone)")).ToArray();
+        if (rootObjects.Length == 0) return false;
+
+        Debug.Log("Cleanup - Destroying "+rootObjects.Length+" root objects");
+        for (int i = rootObjects.Length - 1; i >= 0; i--) {
+            DestroyImmediate(rootObjects[i]);
+        }
+        return true;
     }
 #endif
 
-    private void OnEditorUpdate()
+    private void EditorApplicationUpdate() => OnEditorUpdate(false);
+
+    private void OnEditorUndoUpdate()
+    {
+        // Have this specific for the Undo - need to redraw everything since I dont know what tilemaps
+        if (tilemap3d == null)
+            return;
+
+        var bounds = tilemap.cellBounds;
+        
+        var currentRotations = GetTilemapRotations(tilemap, bounds);
+                
+        CacheCurrentTiles(bounds, currentRotations);
+        OnTilemapChangedUpdateAll();        
+    }
+
+    private void OnEditorUpdate(bool extend = false)
     {
         if (tilemap3d == null)
             return;
 
-        var tileMapMode = tilemap3d.UpdateMode;
         var bounds = tilemap.cellBounds;
         var currentTiles = tilemap.GetTilesBlock(bounds);
         var currentRotations = GetTilemapRotations(tilemap,bounds);
 
-        switch (tileMapMode) {
+
+        switch (tilemap3d.UpdateMode) {
             case AutoUpdateMode.OFF:
                 return;
             case AutoUpdateMode.ON:
@@ -82,12 +120,18 @@ public class TilemapChangeWatcher : MonoBehaviour
                 }
                 break;
             case AutoUpdateMode.INSTANTFAST:
+                if (extend) {
+                    Debug.Log("Want to extend but the tiles that changed are "+ AreTilesEqualGetChanges(currentTiles, previousTiles, bounds, currentRotations, out List<Vector2Int> schangedPositions));
+                }
                 // Check tiles...
                 if (!AreTilesEqualGetChanges(currentTiles, previousTiles, bounds, currentRotations, out List <Vector2Int> changedPositions)) {
-                    //Debug.Log($"Tilemap '{tilemap.name}' changed!");
+                    //Debug.Log("EditorUpdate - Changes: "+changedPositions.Count + "origin: "+gameObject.name);
+                    
+                    // Cashing the entire screen - has to be like this or just changeing the updated area are prown to errors
                     CacheCurrentTiles(bounds, currentRotations);
+                    
                     //OnTilemapChangedUpdateAll();
-                    OnTilemapChangedUpdateOnlyAffectedTiles(changedPositions);
+                    OnTilemapChangedUpdateOnlyAffectedTiles(changedPositions, extend);
 
                 }
                 break;
@@ -185,11 +229,11 @@ public class TilemapChangeWatcher : MonoBehaviour
 
     Sprite GetCachedSprite(TileBase tile, Vector3Int pos, Tilemap tilemap) => previousSprites.TryGetValue(pos, out var sprite) ? sprite : null;
 
-    private void OnTilemapChangedUpdateOnlyAffectedTiles(List<Vector2Int> changedPositions)
+    private void OnTilemapChangedUpdateOnlyAffectedTiles(List<Vector2Int> changedPositions, bool extend = false)
     {
         if (tilemap3d == null)
             tilemap3d = GetComponent<Tilemap3D>();
-        tilemap3d.Generate3DTilesForcedSpecific(changedPositions);
+        tilemap3d.Generate3DTilesForcedSpecific(changedPositions, extend);
     }
 
     private void OnTilemapChangedUpdateAll()
@@ -200,6 +244,7 @@ public class TilemapChangeWatcher : MonoBehaviour
         if (tilemap3d == null)
             tilemap3d = GetComponent<Tilemap3D>();
         tilemap3d.Generate3DTilesForced();
+
     }
 }
 #endif

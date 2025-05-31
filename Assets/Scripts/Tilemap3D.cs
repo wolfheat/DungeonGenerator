@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.WSA;
 using Utilities;
 
 //public enum ViewMode{OFF,TileMap,Objects }
-public enum AutoUpdateMode { OFF, ON, INSTANT, INSTANTFAST }
+public enum AutoUpdateMode {INSTANTFAST, OFF, ON, INSTANT }
 public enum ViewMode { Objects, TileMap}
 public enum MapMode { Floor, Items, Any }
 
@@ -34,7 +37,7 @@ public class Tilemap3D : MonoBehaviour
     public GameObject GetTransBackground => transparentBackground;
 
     public ViewMode Mode { get; set; } = ViewMode.Objects;
-    public AutoUpdateMode UpdateMode { get; set; } = AutoUpdateMode.OFF;
+    public AutoUpdateMode UpdateMode { get; set; } = AutoUpdateMode.INSTANTFAST;
     public bool HoldsItems => itemsTilemap;
 
 
@@ -100,22 +103,39 @@ public class Tilemap3D : MonoBehaviour
         CreateAllObjectsFromSprites();        
     }
 
-    internal void Generate3DTilesForcedSpecific(List<Vector2Int> changedPositions)
+    internal void Generate3DTilesForcedSpecific(List<Vector2Int> changedPositions, bool extend = false)
     {
         if (tilemap == null)
             tilemap = GetComponent<Tilemap>();
 
+        if (extend) {
+            Debug.Log("Generate3DTilesForcedSpecific EXTEND");
+            changedPositions = ExtendPositions(changedPositions);
+        }
+
         Transform[] objects = GetObjectsAt(changedPositions);
 
-        //Debug.Log("Generate Only affected tiles");
+        // Add all the new objects to the UNDO
+        
+        // UNDO - New Group
+        //int group = Undo.GetCurrentGroup();
+
+        // UNDO - Step to next group
+        //Undo.IncrementCurrentGroup();
+
+
+        // UNDO - Add all created objects to group
         for (int i = 0; i < changedPositions.Count; i++) {
             
             Vector2Int pos = changedPositions[i];
 
-            Debug.Log("Change at: "+pos);
             Sprite sprite = tilemap.GetSprite(new Vector3Int(pos.x,pos.y,0));
+        
             // Find the current object and delete it
             if (objects[i] != null) {
+                
+                // UNDO - Add DestroyItem through code
+                //Undo.DestroyObjectImmediate(objects[i].gameObject);
                 DestroyImmediate(objects[i].gameObject);
             }
 
@@ -129,11 +149,34 @@ public class Tilemap3D : MonoBehaviour
 
                 Vector3Int XZPosition = new Vector3Int(pos.x, 0, pos.y);
                 //Debug.Log("Changing tilePosition "+pos+" to dungeon position "+XZPosition);
-                CreateObjectFromSprite(sprite, XZPosition, rotation);
+                GameObject gameObject = CreateObjectFromSprite(sprite, XZPosition, rotation);
 
+                //Undo.RegisterCreatedObjectUndo(gameObject, "Create tile object");
+
+                //Undo.RecordObject(gameObject,"Added Tilemap Object");
             }
-        }    
+        }
 
+        // UNDO - merge down
+        //Undo.CollapseUndoOperations(group);
+    }
+
+    // Extends the positions to update all around
+    private List<Vector2Int> ExtendPositions(List<Vector2Int> changedPositions)
+    {
+        Debug.Log("Extending positions. Start = "+changedPositions.Count);
+        HashSet<Vector2Int> vector2Ints = new HashSet<Vector2Int>();
+
+        foreach (Vector2Int pos in changedPositions) {
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
+                    Vector2Int newPos = pos + new Vector2Int(i,j);
+                    vector2Ints.Add(pos);
+                }
+            }
+        }
+        Debug.Log("Extending positions. End = "+vector2Ints.Count);
+        return vector2Ints.ToList();
     }
 
     private Transform[] GetObjectsAt(List<Vector2Int> pos)
@@ -187,7 +230,7 @@ public class Tilemap3D : MonoBehaviour
         }
     }
 
-    private void CreateObjectFromSprite(Sprite sprite, Vector3Int pos, float YRotation = 0)
+    private GameObject CreateObjectFromSprite(Sprite sprite, Vector3Int pos, float YRotation = 0)
     {
         try {
             // This uses the index the sprite has in the array and finds the corresponding index in the objects array to map the tile
@@ -206,16 +249,28 @@ public class Tilemap3D : MonoBehaviour
 
             if (prefab == null) {
                 Debug.Log("Could not find an defined object for the sprite: "+sprite.name);
-                return;
+                return null;
             }
 
+            // Create with Undo support
+            //GameObject tile = (GameObject)PrefabUtility.InstantiatePrefab(prefab, objectHolder.transform);
+            //Undo.RegisterCreatedObjectUndo(tile, "Create Tile Object");
+            //Undo.SetTransformParent(tile.transform, objectHolder.transform, "Set Tile Parent");
+
             // Instantiating the corresponding object
-            GameObject tile = Instantiate(prefab, objectHolder.transform);
+            //GameObject tile = Instantiate(prefab, objectHolder.transform);
+
+            // UNDO - New way to instantiate the prefab and set its parent
+            GameObject tile = (GameObject)PrefabUtility.InstantiatePrefab(prefab, objectHolder.scene); // not transform
+            tile.transform.SetParent(objectHolder.transform, false);
+
             tile.transform.SetLocalPositionAndRotation(pos + offset, Quaternion.Euler(0, YRotation, 0));
+            return tile;
         }
         catch (Exception e) {
             Debug.Log("Could not create Item: "+e.Message);
         }
+        return null;
     }
 
     private void OnGUI()

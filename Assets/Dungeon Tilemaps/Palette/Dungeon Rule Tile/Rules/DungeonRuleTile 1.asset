@@ -679,3 +679,4 @@ MonoBehaviour:
   hollowTiles:
   - {fileID: 11400000, guid: 8de3e542c432a5c4296d101d05f99225, type: 2}
   - {fileID: 11400000, guid: 4f23f7f9ebfd9e840a73c5803a9b6a05, type: 2}
+  - {fileID: 11400000, guid: a53575f9f4cb42b4ab2b880a9cc8b94d, type: 2}

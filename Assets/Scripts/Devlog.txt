@@ -29,6 +29,17 @@ May 2025
 		* Made a enable class that enables all tileObjects when game is run
 		* Started working on getting toggle between tilemaps if any mode is selected
 27/5	* Reworked the generator dungeon window. And system for handeling active maps
+30/5	* Removed the Undo part from the code since it did not work correctly. Might have to limit player from running undo in object mode
+		* Added new tilemap grass outdoor
+		* Tilemap can bind to defaultTilemaps
+		* Tilemap outdoor now has colliders so player cant walk off paths
+
+
+		// Add outdooor tilemaps simple
+
+
+
+
 
 		// Fix the undo registration
 

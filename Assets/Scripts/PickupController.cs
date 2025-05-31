@@ -56,10 +56,10 @@ public class PickUpController : MonoBehaviour
         Vector3 directionVector = playerPosition - target;
         Debug.Log("Direction is " + directionVector);
 
-        Vector3 overlapBoxPosition = target + directionVector * 0.1f;
+        Vector3 overlapBoxPosition = target + directionVector * 0.15f;
 
         // Get the direction the player are and move the overlapBox in that direction
-        Collider[] colliders = Physics.OverlapBox(overlapBoxPosition, pickupBoxExtents, Quaternion.identity,wallAndDoorLayerMask);
+        Collider[] colliders = Physics.OverlapBox(overlapBoxPosition, Game.boxSize, Quaternion.identity,wallAndDoorLayerMask);
 
         if(showColliderBox) {
             GameObject tempBox = Instantiate(colliderShowPrefab);
@@ -78,7 +78,7 @@ public class PickUpController : MonoBehaviour
     {
         newTarget = target;
         // Get the direction the player are and move the overlapBox in that direction
-        Collider[] colliders = Physics.OverlapBox(target, pickupBoxExtents, Quaternion.identity, stairLayerMasks);
+        Collider[] colliders = Physics.OverlapBox(target, Game.boxSize, Quaternion.identity, stairLayerMasks);
 
         if (colliders.Length > 0) { 
             if (colliders[0].gameObject.layer == LayerMask.NameToLayer("StairUp")) { // Stair UP

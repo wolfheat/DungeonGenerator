@@ -7,7 +7,7 @@ using System;
 
 public class TileMapControls : EditorWindow
 {
-    public static AutoUpdateMode autoUpdate = AutoUpdateMode.OFF;
+    public static AutoUpdateMode autoUpdate = AutoUpdateMode.INSTANTFAST;
     public static ViewMode activeViewMode = ViewMode.Objects;
     //public static MapMode activeMapMode = MapMode.Floor;
     public static bool toggleState = true;
@@ -183,7 +183,7 @@ public class TileMapControls : EditorWindow
     private void ToggleActive(int layer, int mapType)
     {
         
-        Debug.Log("Layer: ["+layer+","+mapType+"] toggle active!    ViewMode = " + activeViewMode);
+        //Debug.Log("Layer: ["+layer+","+mapType+"] toggle active!    ViewMode = " + activeViewMode);
 
         Tilemap3DLevel[] levels = GetAllTilemapLevels();
 
@@ -197,20 +197,20 @@ public class TileMapControls : EditorWindow
             if(Mathf.RoundToInt(level.transform.position.y) == -layer) {
                 // Correct layer - activate it if inactive
                 if (!level.gameObject.activeSelf) {
-                    Debug.Log("ToggleActive - Enable Level");
+                    Debug.Log("ToggleActive - Activating Level "+layer+" gameObject");
                     level.gameObject.SetActive(true);
                 }
 
                 if (mapType == 0) {
                     if (!level.Tilemap3DFloor.gameObject.activeSelf) {
-                        Debug.Log("ToggleActive - Floor enable");
+                        Debug.Log("ToggleActive - Activating Floor");
                         level.ActivateFloorTilemap();
                     }
                     delayedSelectTileMap = level.Tilemap3DFloor;
                 }
                 else {
                     if (!level.Tilemap3DItems.gameObject.activeSelf) {
-                        Debug.Log("ToggleActive - Items enable");
+                        Debug.Log("ToggleActive - Activating Items");
                         level.ActivateItemsTilemap();
                     }
                     delayedSelectTileMap = level.Tilemap3DItems;
@@ -221,7 +221,7 @@ public class TileMapControls : EditorWindow
         // Used to turn on the new tilemap and select it from editor calls
         if (delayedSelectTileMap != null)
             EditorApplication.delayCall += () => {
-                Debug.Log("Delayed set as active from ToggleActive");
+                Debug.Log("Painting on "+delayedSelectTileMap.name+" (as Delay Call)");
                 //Selection.activeGameObject = delayedSelectTileMap.gameObject;
                 GridPaintingState.scenePaintTarget = delayedSelectTileMap.gameObject;
                 //SceneView.lastActiveSceneView.FrameSelected(); // Optional: focus on it
